@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Net;
 using System.Windows.Forms;
@@ -25,12 +21,10 @@ namespace Saper
         public GameSession(Player player,Player enemy)
         {
             lives = 5;
-            // hz
             this.isserver = false;
             this.player = player;
             this.enemy = enemy;
             this.isGameOver = false;
-            //this.player.gamefield.SetGameSession(this);
         }
         public void CreateGame(String ip,int port)
         {
@@ -50,10 +44,6 @@ namespace Saper
             tcpClient = new TcpClient();
             tcpClient.Connect(iPEndPoint);
             networkStream = tcpClient.GetStream();
-        }
-        public void ReConnect()
-        {
-            //tcpClient.Connect(iPEndPoint);
         }
         public void EndGame()
         {

@@ -1,16 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net;
-using System.Threading;
 
 namespace Saper
 {
@@ -41,17 +34,12 @@ namespace Saper
             InitializeComponent();
             listViewchat.View = View.List;
         }
-        public void ListenChat()
-        {
-            //thread_proc();
-        }
         public void thread_proc()
         {
             if (!ischatconnected)
                 return;
             if (this.tcpChatClient == null)
                 return;
-            //networkStreamChat = tcpChatClient.GetStream();
             if (networkStreamChat == null)
                 return;
             this.br = new BinaryReader(networkStreamChat);
@@ -111,7 +99,6 @@ namespace Saper
             gameFieldplayer.labellives = labellives;
             MessageBox.Show("Game created");
             gameexists = true;
-            //this.StartChat();
            
         }
 
@@ -140,13 +127,10 @@ namespace Saper
             gameSession = new GameSession(player, enemy);
             gameSession.JoinGame(ip, port);
             gameFieldplayer.SetGameSession(gameSession);
-            //gameSession.ConnectToGame("127.0.0.1",8888);
-            //MessageBox.Show("Connecting to game");
             gameFieldplayer.labellives = labellives;
             MessageBox.Show("Now you can play");
             labellives.Text = "Lives: " + gameSession.lives.ToString();
             gameexists = true;
-            //this.JoinChat();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -196,8 +180,6 @@ namespace Saper
                 MessageBox.Show("Connection closed");
                 return;
             }
-
-            //ListenChat();
             NetworkStream networkStream;
             try
             {
@@ -259,23 +241,9 @@ namespace Saper
 
         private void buttonSend_Click(object sender, EventArgs e)
         {
-            //if (!ischatconnected)
-            //return;
-            //if (this.tcpChatClient == null)
-            //    return;
-            //networkStreamChat = tcpChatClient.GetStream();
-            //if (networkStreamChat == null)
-            //   return;
-            //bw = new BinaryWriter(networkStreamChat);
-            //bw.Write(this.message);
             if (gameSession == null)
                 return;
             if (gameFieldplayer.networkStream == null)
-                return;
-            //if (result == "bombedcell")
-             //   DecLives();
-            //byte[] bytes = Encoding.UTF8.GetBytes(result + "I:" + cell.i.ToString() + "J:" + cell.j.ToString());
-            //networkStream.Write(bytes, 0, bytes.Length);
             BinaryWriter writer = new BinaryWriter(gameFieldplayer.networkStream);
             writer.Write("CHAT:"+login+":"+message);
             writer.Write(5);

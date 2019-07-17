@@ -1,18 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Saper
 {
     class GameField
     {
-        // change logic bombsnum
         public bool gamemove;
         public NetworkStream networkStream;
         public GameSession gameSession;
@@ -28,14 +24,12 @@ namespace Saper
         public GameField(int fieldsize, FlowLayoutPanel bordpanel, TextBox tb,bool isenemy)
         {
             gamemove = true;
-            //this.gameSession = game;
             bordsize = fieldsize;
             cellsleft = tb;
             cellsleftcount = fieldsize * fieldsize - bombsnum;
             cellsleft.Text = cellsleftcount.ToString();
             bord = bordpanel;
             bord.FlowDirection = FlowDirection.RightToLeft;
-            // compiler error cs1612 avoid
             Padding buff = Padding.Empty;
             bord.Margin = buff;
             bord.Padding=buff;
@@ -52,7 +46,7 @@ namespace Saper
                     bord.Controls.Add(CellButtons[i, j]);
                 }
             }
-            CalculateAroundBombs2(CellButtons);
+            CalculateAroundBombs(CellButtons);
         }
         public void DecLives()
         {
@@ -62,7 +56,6 @@ namespace Saper
         public void SetGameSession(GameSession game)
         {
             this.gameSession = game;
-            //this.gameSession.CreateGame();
             this.networkStream = this.gameSession.networkStream;
         }
         public void CellOpened()
@@ -132,124 +125,7 @@ namespace Saper
             }
             return result;
         }
-        public void CalculateAroundBombs(CellButton[,] cells)
-        {
-            for (int i = 0; i < bordsize; i++)
-            {
-                for (int j = 0; j < bordsize; j++)
-                {
-                    bool problemcell=false;
-                    if (i == 0 || j == 0)
-                        problemcell = true;
-                    if (i == bordsize-1 || j == bordsize-1)
-                        problemcell = true;
-                    if (!problemcell)
-                    {
-                        int result = 0;
-                        if (cells[i - 1, j].IsBombed())
-                            result++;
-                        if (cells[i - 1, j - 1].IsBombed())
-                            result++;
-                        if (cells[i - 1, j + 1].IsBombed())
-                            result++;
-                        if (cells[i-1, j - 1].IsBombed())
-                            result++;
-                        if (cells[i+1, j - 1].IsBombed())
-                            result++;
-                        if (cells[i, j - 1].IsBombed())
-                            result++;
-                        if (cells[i - 1, j - 1].IsBombed())
-                            result++;
-                        if (cells[i + 1, j + 1].IsBombed())
-                            result++;
-
-                        cells[i, j].SetBombsAround(result);
-                    }
-                    if (problemcell)
-                    {
-                        int result = 0;
-                        try
-                        {
-                            if (cells[i - 1, j].IsBombed())
-                                result++;
-                        }
-                        catch
-                        {
-
-                        }
-                        try
-                        {
-                            if (cells[i - 1, j + 1].IsBombed())
-                                result++;
-                        }
-                        catch
-                        {
-
-                        }
-                        try
-                        {
-                            if (cells[i - 1, j - 1].IsBombed())
-                                result++;
-                        }
-                        catch
-                        {
-
-                        }
-                        try
-                        {
-                            if (cells[i + 1, j - 1].IsBombed())
-                                result++;
-                        }
-                        catch
-                        {
-
-                        }
-                        try
-                        {
-
-                            if (cells[i, j - 1].IsBombed())
-                                result++;
-                        }
-                        catch
-                        {
-
-                        }
-                        try
-                        {
-
-                            if (cells[i - 1, j - 1].IsBombed())
-                                result++;
-                        }
-                        catch
-                        {
-
-                        }
-                        try
-                        {
-                            result++;
-
-                        }
-                        catch
-                        {
-
-                        }
-                        try
-                        {
-                            if (cells[i + 1, j + 1].IsBombed())
-                                result++;
-                        }
-                        catch
-                        {
-
-                        }
-                        
-                        cells[i, j].SetBombsAround(result);
-                        
-                    }
-
-                }
-            }
-        }
+        // only debug function
         public void showall()
         {
             foreach (CellButton cell in CellButtons)
@@ -257,7 +133,7 @@ namespace Saper
                 cell.Mouse_Up(this,new MouseEventArgs(MouseButtons.Left,1,1,1,1));
             }
         }
-        public void CalculateAroundBombs2(CellButton[,] originalcells)
+        public void CalculateAroundBombs(CellButton[,] originalcells)
         {
             CellButton[,] cells = new CellButton[bordsize + 2, bordsize + 2];
             int buffsize = bordsize + 2;
@@ -302,7 +178,6 @@ namespace Saper
             if (result == "bombedcell")
                 DecLives();
             byte[] bytes = Encoding.UTF8.GetBytes(result+"I:"+cell.i.ToString()+"J:"+cell.j.ToString());
-            //networkStream.Write(bytes, 0, bytes.Length);
             try
             {
                 BinaryWriter writer = new BinaryWriter(networkStream);

@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Net;
 
@@ -14,19 +11,15 @@ namespace Saper
         private int id;
         private IPEndPoint serverIP;
         public TcpClient tcpClient;
-        //private int port;
-        //private IPAddress ip;
         public NetClient()
         {
             this.tcpClient = new TcpClient();
         }
-        // todo: server return user id
         public void JoinGame(String ip, int port)
         {
             serverIP = new IPEndPoint(IPAddress.Parse(ip), port);
             tcpClient.Connect(serverIP);
         }
-        // check cell
         public void DoTurn(String request)
         {
             NetworkStream networkStream = tcpClient.GetStream();
@@ -52,10 +45,6 @@ namespace Saper
             networkStream.Close();
             response = new byte[responselength];
         }
-        public void ParseResponse(byte[] response)
-        {
-
-        }
         public void Send(String content)
         {
             byte[] bytes = Encoding.UTF8.GetBytes(content);
@@ -79,8 +68,6 @@ namespace Saper
             {
                 return "";
             }
-
-
         }
     }
 }
